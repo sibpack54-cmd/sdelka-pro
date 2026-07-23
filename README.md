@@ -1,3 +1,4 @@
+<div align="center">
 🚀 СДЕЛКА.ПРО
 Квизы, которые продают
 https://nextjs.org/
@@ -121,3 +122,7 @@ Push: git push origin feature/amazing-feature
 Открой Pull Request
 📄 Лицензия
 MIT License. Смотри LICENSE для деталей.
+<div align="center">
+🌐 sdelka.pro · 💬 Telegram · 📧 Email
+Сделано с ❤️ в Омске
+</div>
