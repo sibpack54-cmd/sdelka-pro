@@ -151,7 +151,7 @@ MIT License. Смотри LICENSE для деталей.
 📧 Email: demo@sdelka.pro
 
 <div align="center">
-Сделано с ❤️ в Омске
+Сделано с ❤️ в Новосибирске
 
 ⭐ Если проект вам понравился, поставьте звезду на GitHub!
 
