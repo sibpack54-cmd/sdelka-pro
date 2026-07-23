@@ -1,4 +1,4 @@
-🚀 СДЕЛКА.ПРО — Квизы, которые продают
+  🚀 СДЕЛКА.ПРО — Квизы, которые продают
 <div align="center">
 https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js
 https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript
