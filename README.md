@@ -1,125 +1,128 @@
-# СДЕЛКА.ПРО
-
-Конструктор квизов и коммерческих предложений для малого бизнеса.
-
-## Быстрый старт
-
-```bash
-# 1. Клонируй репозиторий
+<div align="center">
+🚀 СДЕЛКА.ПРО
+Квизы, которые продают
+https://nextjs.org/
+https://www.typescriptlang.org/
+https://www.prisma.io/
+https://tailwindcss.com/
+https://www.postgresql.org/
+</div>
+✨ Что это?
+СДЕЛКА.ПРО — платформа для создания интерактивных квизов, которые автоматически генерируют коммерческие предложения в PDF и отправляют их клиентам на email.
+Идеально для: фотографов, event-менеджеров, ремонтных бригад, флористов, event-агентств и любого бизнеса, где нужен расчёт стоимости услуг.
+🎯 Возможности
+Таблица
+Фича	Описание
+📝 Конструктор квизов	Drag-and-drop вопросы, варианты ответов, формулы цен
+📄 3 шаблона PDF	Стандартный, Современный (градиенты), Классический (serif)
+📧 Email рассылка	Автоматическая отправка PDF через Resend
+💬 Telegram уведомления	Мгновенные алерты о новых заявках
+📊 Аналитика	Графики заявок, конверсия, средний чек
+🎨 Кастомизация	Логотип, брендинг, публичная ссылка
+📱 Адаптивный дизайн	Работает на телефоне, планшете, десктопе
+🖼️ Скриншоты
+<div align="center">
+Таблица
+Лендинг	Дашборд	Конструктор
+🏠 Главная	📊 Статистика	📝 Создание квиза
+Примеры квизов	Графики заявок	Вопросы и ответы
+Тарифы	Быстрый старт	Формулы цен
+</div>
+🚀 Быстрый старт
+1. Клонирование
+bash
+git clone https://github.com/sibpack54-cmd/sdelka-pro.git
 cd sdelka-pro
-
-# 2. Запусти скрипт
-./start.sh
-```
-
-Или вручную:
-
-```bash
-# Установка зависимостей
+2. Установка зависимостей
+bash
 npm install
+3. Настройка окружения
+Создай файл .env:
+env
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/sdelka_pro"
 
-# Настройка .env
-cp .env.example .env
-# Отредактируй .env — укажи DATABASE_URL
+# Auth
+JWT_SECRET="your-super-secret-key-min-32-chars"
 
-# Миграция базы данных
+# Email (Resend)
+RESEND_API_KEY="re_xxxxxxxxxxxxxxxx"
+
+# Telegram Bot (опционально)
+TELEGRAM_BOT_TOKEN="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+
+# App
+NEXTAUTH_URL="http://localhost:3000"
+4. База данных
+bash
 npx prisma migrate dev --name init
-
-# Заполнение демо-данными
 npx prisma db seed
-
-# Запуск dev-сервера
+5. Запуск
+bash
 npm run dev
-```
-
-## Демо
-
-После seed:
-- Лендинг: http://localhost:3000
-- Демо-квиз: http://localhost:3000/q/ivanov-photo
-- Дашборд: http://localhost:3000/dashboard
-- Демо-аккаунт: demo@sdelka.pro / demo123
-
-## Структура проекта
-
-```
+Открой http://localhost:3000
+📁 Структура проекта
+plain
 sdelka-pro/
-├── app/
-│   ├── (public)/[slug]/       # Публичный квиз для клиентов
-│   ├── (dashboard)/            # Личный кабинет бизнеса
-│   │   ├── page.tsx            # Обзор / статистика
-│   │   ├── quiz/               # Управление квизами
-│   │   │   ├── page.tsx        # Список квизов
-│   │   │   ├── new/            # Создание квиза
-│   │   │   └── [id]/           # Редактирование + лиды
-│   │   ├── templates/          # Шаблоны PDF
-│   │   └── settings/           # Настройки профиля
-│   ├── api/                    # API Routes
-│   ├── login/                  # Страница входа
-│   ├── register/               # Страница регистрации
-│   ├── layout.tsx              # Корневой layout
-│   └── page.tsx                # Landing page
-├── components/
-│   ├── ui/                     # UI-компоненты (Button, Input, Card)
-│   ├── QuizBuilder/            # Конструктор квиза (drag-and-drop)
-│   └── QuizRenderer/           # Рендер публичного квиза
-├── lib/
-│   ├── db/prisma.ts            # Prisma клиент
-│   ├── auth.ts                 # JWT (jose)
-│   ├── price-calculator.ts     # Калькулятор цен
-│   ├── pdf/generator.ts        # Генерация PDF (Puppeteer + Handlebars)
-│   ├── pdf/templates/          # HTML-шаблоны PDF
-│   ├── email/resend.ts         # Отправка email
-│   └── utils.ts                # Хелперы
+├── app/                    # Next.js App Router
+│   ├── api/               # API Routes
+│   │   ├── auth/         # Вход/регистрация
+│   │   ├── pdf/          # Генерация PDF
+│   │   ├── q/            # Публичные квизы
+│   │   ├── quizzes/      # CRUD квизов
+│   │   ├── stats/        # Аналитика
+│   │   ├── telegram/     # Уведомления
+│   │   └── user/         # Профиль
+│   ├── dashboard/        # Личный кабинет
+│   ├── login/            # Страница входа
+│   ├── register/         # Регистрация
+│   └── page.tsx          # Лендинг
+├── components/           # React компоненты
+│   ├── QuizBuilder/     # Конструктор
+│   ├── QuizRenderer/    # Прохождение
+│   └── ui/              # UI-kit
+├── lib/                  # Утилиты
+│   ├── auth.ts          # JWT
+│   ├── db/prisma.ts     # Prisma клиент
+│   ├── email/           # Email сервис
+│   ├── pdf/             # PDF генератор
+│   └── price-calculator.ts
 ├── prisma/
-│   ├── schema.prisma           # Схема БД
-│   └── seed.ts                 # Демо-данные
-├── types/
-│   └── index.ts                # TypeScript типы
-└── middleware.ts               # Защита роутов
-```
-
-## API Endpoints
-
-| Метод | Endpoint | Описание |
-|-------|----------|----------|
-| POST | /api/auth/register | Регистрация |
-| POST | /api/auth/login | Авторизация |
-| GET | /api/auth/me | Текущий пользователь |
-| GET | /api/quizzes | Список квизов |
-| POST | /api/quizzes | Создать квиз |
-| GET | /api/quizzes/[id] | Получить квиз |
-| PUT | /api/quizzes/[id] | Обновить квиз |
-| DELETE | /api/quizzes/[id] | Удалить квиз |
-| GET | /api/quizzes/[id]/submissions | Лиды |
-| GET | /api/q/[slug] | Публичный квиз |
-| POST | /api/q/[slug]/submit | Отправить ответы + PDF |
-| POST | /api/pdf/generate | Генерация PDF |
-
-## Флоу работы
-
-### Для бизнеса:
-1. Регистрация → личный кабинет
-2. Создание квиза (вопросы + цены)
-3. Активация квиза
-4. Получение уникальной ссылки: `sdelka.pro/q/ivanov-photo`
-5. Отслеживание лидов в дашборде
-
-### Для клиента:
-1. Переходит по ссылке
-2. Отвечает на вопросы квиза
-3. Видит предварительную сумму
-4. Вводит email
-5. Получает PDF на почту
-
-## Монетизация (будущее)
-
-| Тариф | Цена | Лимиты |
-|-------|------|--------|
-| Free | 0₽ | 1 квиз, 50 прохождений/мес |
-| Pro | 990₽/мес | Безлимит квизов, 500 прохождений |
-| Business | 2990₽/мес | Безлимит всего, API |
-
-## Лицензия
-
-MIT
+│   ├── schema.prisma    # Модели БД
+│   └── seed.ts          # Демо-данные
+└── public/              # Статика
+🛠️ Технологии
+Frontend: Next.js 15, React 19, TypeScript, Tailwind CSS
+Backend: Next.js API Routes, Prisma ORM
+Database: PostgreSQL
+PDF: Puppeteer + HTML шаблоны
+Email: Resend API
+Auth: JWT (jsonwebtoken)
+Charts: Recharts
+📝 Демо-аккаунт
+Таблица
+Поле	Значение
+Email	demo@sdelka.pro
+Пароль	demo123
+🗺️ Roadmap
+[x] MVP с квизами и PDF
+[x] 3 шаблона PDF
+[x] Telegram уведомления
+[x] Графики и аналитика
+[ ] Интеграция с CRM (Bitrix, AmoCRM)
+[ ] Подключение ЮKassa/Stripe
+[ ] Кастомные домены
+[ ] White-label решение
+[ ] Мобильное приложение
+🤝 Контрибуция
+Fork репозитория
+Создай ветку: git checkout -b feature/amazing-feature
+Commit: git commit -m "Add amazing feature"
+Push: git push origin feature/amazing-feature
+Открой Pull Request
+📄 Лицензия
+MIT License. Смотри LICENSE для деталей.
+<div align="center">
+🌐 sdelka.pro · 💬 Telegram · 📧 Email
+Сделано с ❤️ в Омске
+</div>
