@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String        @id @default(cuid())
+  email              String        @unique
+  passwordHash       String
+  name               String?
+  businessName       String?
+  slug               String        @unique
+  logoUrl            String?
+  phone              String?
+  emailNotifications Boolean       @default(true)
+  pdfTemplate        PdfTemplateType @default(default)
+  resendApiKey       String?
+  resendFrom         String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  quizzes            Quiz[]
+  pdfTemplates       PdfTemplate[]
+}
+
+enum PdfTemplateType {
+  default
+  modern
+  classic
+}
+
+model Quiz {
+  id              String       @id @default(cuid())
+  userId          String
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title           String       @default("Мой квиз")
+  description     String?
+  isActive        Boolean      @default(false)
+  questions       Json         @default("[]")
+  pricingFormula  String?      // JS-формула для расчёта
+  welcomeMessage  String       @default("Ответьте на несколько вопросов, чтобы получить расчёт стоимости")
+  thankYouMessage String       @default("Спасибо! КП отправлено на вашу почту")
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  submissions     Submission[]
+}
+
+model PdfTemplate {
+  id          String   @id @default(cuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  name        String
+  htmlContent String   @db.Text
+  cssContent  String?  @db.Text
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model Submission {
+  id              String           @id @default(cuid())
+  quizId          String
+  quiz            Quiz             @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers         Json
+  calculatedPrice Int
+  clientEmail     String
+  clientName      String?
+  clientPhone     String?
+  pdfUrl          String?
+  status          SubmissionStatus @default(completed)
+  createdAt       DateTime         @default(now())
+}
+
+enum SubmissionStatus {
+  completed
+  email_sent
+  error
+}

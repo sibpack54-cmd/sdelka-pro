@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'DejaVu Sans', Arial, sans-serif; padding: 40px; color: #333; line-height: 1.6; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #FF6B35; }
+    .header-left { flex: 1; }
+    .title { font-size: 28px; font-weight: bold; color: #1a1a1a; margin-bottom: 5px; }
+    .subtitle { font-size: 16px; color: #666; }
+    .logo { max-width: 120px; max-height: 80px; object-fit: contain; }
+    .info-section { margin: 25px 0; }
+    .section-title { font-size: 14px; text-transform: uppercase; color: #999; letter-spacing: 1px; margin-bottom: 10px; }
+    .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { color: #666; font-weight: 500; }
+    .info-value { color: #1a1a1a; font-weight: 600; }
+    .total-box { margin-top: 30px; padding: 25px; background: linear-gradient(135deg, #fff5f0 0%, #ffe6d9 100%); border-radius: 12px; border-left: 4px solid #FF6B35; }
+    .total-label { font-size: 14px; color: #666; text-transform: uppercase; letter-spacing: 2px; }
+    .total-amount { font-size: 36px; font-weight: bold; color: #FF6B35; margin-top: 5px; }
+    .footer { margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee; color: #999; font-size: 12px; }
+    .footer-contact { margin-top: 10px; }
+    .footer-contact strong { color: #666; }
+    .badge { display: inline-block; padding: 4px 12px; background: #f0f0f0; border-radius: 20px; font-size: 12px; color: #666; margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <div class="title">Коммерческое предложение</div>
+      <div class="subtitle">{{businessName}}</div>
+    </div>
+    {{#if logoUrl}}<img src="{{logoUrl}}" class="logo" />{{/if}}
+  </div>
+
+  <div class="info-section">
+    <div class="section-title">Информация о клиенте</div>
+    <div class="info-row">
+      <span class="info-label">Клиент</span>
+      <span class="info-value">{{clientName}}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Email</span>
+      <span class="info-value">{{clientEmail}}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Дата формирования</span>
+      <span class="info-value">{{date}}</span>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <div class="section-title">Детали заказа</div>
+    {{#each answers}}
+    <div class="info-row">
+      <span class="info-label">{{@key}}</span>
+      <span class="info-value">{{this}}</span>
+    </div>
+    {{/each}}
+  </div>
+
+  <div class="total-box">
+    <div class="total-label">Итоговая стоимость</div>
+    <div class="total-amount">{{priceFormatted}} ₽</div>
+  </div>
+
+  <div class="footer">
+    <div><strong>{{businessName}}</strong></div>
+    {{#if phone}}<div class="footer-contact">Телефон: {{phone}}</div>{{/if}}
+    <div class="footer-contact">Документ сформирован через <strong>СДЕЛКА.ПРО</strong></div>
+    <span class="badge">Действительно 14 дней</span>
+  </div>
+</body>
+</html>
