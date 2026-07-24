@@ -360,7 +360,7 @@ export function QuizBuilder({ initialQuiz }: QuizBuilderProps) {
                       />
                       <button
                         onClick={() => removeOption(qIndex, oIndex)}
-                        disabled={question.options.length <= 2}
+                        disabled={(question.options?.length ?? 0) <= 2}
                         className="p-1.5 rounded-lg hover:bg-red-50 text-red-400 disabled:opacity-30"
                       >
                         ✕

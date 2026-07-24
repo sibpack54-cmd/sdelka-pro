@@ -20,6 +20,8 @@ model User {
   pdfTemplate        PdfTemplateType @default(default)
   resendApiKey       String?
   resendFrom         String?
+  telegramChatId     String?
+  telegramEnabled    Boolean       @default(true)
   createdAt          DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
 

@@ -55,6 +55,35 @@ export async function POST(
       },
     });
 
+    // 3.1 Telegram-уведомление владельцу
+    if (quiz.user.telegramChatId && quiz.user.telegramEnabled) {
+      const priceFormatted = new Intl.NumberFormat('ru-RU').format(price);
+      const clientDisplayName = clientName || answers['q5'] || 'Клиент';
+      const telegramMessage = `
+🔔 <b>Новая заявка!</b>
+
+📋 Квиз: ${quiz.title}
+👤 Клиент: ${clientDisplayName}
+📧 Email: ${clientEmail}
+💰 Сумма: ${priceFormatted} ₽
+📅 ${new Date().toLocaleString('ru-RU')}
+      `.trim();
+
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001';
+        await fetch(`${baseUrl}/api/telegram/notify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chatId: quiz.user.telegramChatId,
+            message: telegramMessage,
+          }),
+        });
+      } catch (telegramError) {
+        console.error('Telegram notification error:', telegramError);
+      }
+    }
+
     // 4. Сгенерировать PDF с использованием шаблона пользователя
     let pdfUrl: string | null = null;
     try {

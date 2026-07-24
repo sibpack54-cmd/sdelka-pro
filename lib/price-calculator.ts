@@ -52,7 +52,7 @@ export function calculatePrice(
   // Количество часов (q2)
   const q2 = questions.find(q => q.id === 'q2');
   if (q2) {
-    hours = parseInt(answers['q2']) || q2.default || 2;
+    hours = parseInt(String(answers['q2'])) || Number(q2.default) || 2;
   }
 
   // Базовая стоимость

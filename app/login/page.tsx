@@ -50,9 +50,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2">
-            <div className="w-10 h-10 bg-primary-500 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold">СП</span>
-            </div>
+            <img src="/logo-main.png" alt="СДЕЛКА.ПРО" className="w-10 h-10" />
             <span className="text-xl font-bold text-dark-900">СДЕЛКА.ПРО</span>
           </Link>
         </div>

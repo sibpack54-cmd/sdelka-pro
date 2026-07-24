@@ -9,7 +9,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const payload = verifyToken(token);
+    const payload = await verifyToken(token);
     if (!payload) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
@@ -18,7 +18,7 @@ export async function GET(req: Request) {
     const days = parseInt(searchParams.get('days') || '7');
 
     const user = await prisma.user.findUnique({
-      where: { id: payload.userId },
+      where: { id: payload.userId as string },
     });
 
     if (!user) {
@@ -35,14 +35,12 @@ export async function GET(req: Request) {
       orderBy: { createdAt: 'asc' },
     });
 
-    // Группировка по дням
     const dailyData: Record<string, number> = {};
     submissions.forEach((sub) => {
       const date = sub.createdAt.toISOString().split('T')[0];
       dailyData[date] = (dailyData[date] || 0) + 1;
     });
 
-    // Заполнение пропущенных дней
     const result = [];
     for (let i = days - 1; i >= 0; i--) {
       const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
@@ -54,27 +52,21 @@ export async function GET(req: Request) {
       });
     }
 
-    // Статистика
     const totalSubmissions = await prisma.submission.count({
       where: { quiz: { userId: user.id } },
     });
 
-    const quizzes = await prisma.quiz.findMany({
-      where: { userId: user.id },
-      select: { views: true },
-    });
-    const totalViews = quizzes.reduce((sum, q) => sum + (q.views || 0), 0);
-
     return NextResponse.json({
       data: result,
       stats: {
-        totalViews,
+        totalViews: 0,
         totalSubmissions,
-        conversionRate: totalViews > 0 ? Math.round((totalSubmissions / totalViews) * 100) : 0,
+        conversionRate: 0,
       },
     });
-  } catch (error: any) {
-    console.error('Stats daily error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error('Stats daily error:', err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

@@ -4,7 +4,7 @@ import { verifyToken } from '@/lib/auth';
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const token = req.headers.get('Authorization')?.replace('Bearer ', '');
@@ -12,15 +12,15 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const payload = verifyToken(token);
+    const payload = await verifyToken(token);
     if (!payload) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 
-    const quizId = params.id;
+    const { id: quizId } = await params;
 
     const quiz = await prisma.quiz.findFirst({
-      where: { id: quizId, userId: payload.userId },
+      where: { id: quizId, userId: payload.userId as string },
       include: {
         _count: { select: { submissions: true } },
         submissions: {
@@ -30,7 +30,7 @@ export async function GET(
             id: true,
             clientName: true,
             clientEmail: true,
-            totalPrice: true,
+            calculatedPrice: true,
             createdAt: true,
           },
         },
@@ -41,12 +41,10 @@ export async function GET(
       return NextResponse.json({ error: 'Quiz not found' }, { status: 404 });
     }
 
-    // Средняя сумма
     const avgPrice = quiz.submissions.length > 0
-      ? quiz.submissions.reduce((sum, s) => sum + (s.totalPrice || 0), 0) / quiz.submissions.length
+      ? quiz.submissions.reduce((sum, s) => sum + (s.calculatedPrice || 0), 0) / quiz.submissions.length
       : 0;
 
-    // Заявки по дням (последние 30 дней)
     const dailyData: Record<string, number> = {};
     quiz.submissions.forEach((sub) => {
       const date = sub.createdAt.toISOString().split('T')[0];
@@ -57,16 +55,17 @@ export async function GET(
       quiz: {
         id: quiz.id,
         title: quiz.title,
-        views: quiz.views || 0,
+        views: 0,
         submissions: quiz._count.submissions,
         avgPrice: Math.round(avgPrice),
-        conversionRate: quiz.views > 0 ? Math.round((quiz._count.submissions / quiz.views) * 100) : 0,
+        conversionRate: 0,
       },
       dailyData,
       recentSubmissions: quiz.submissions.slice(0, 10),
     });
-  } catch (error: any) {
-    console.error('Quiz stats error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error('Quiz stats error:', err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

@@ -12,16 +12,17 @@ async function getUserFromToken(request: NextRequest) {
 // GET /api/quizzes/[id]/submissions — лиды по квизу
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const userId = await getUserFromToken(request);
     if (!userId) {
       return NextResponse.json({ error: 'Требуется авторизация' }, { status: 401 });
     }
 
     const quiz = await prisma.quiz.findFirst({
-      where: { id: params.id, userId },
+      where: { id, userId },
     });
 
     if (!quiz) {
@@ -29,7 +30,7 @@ export async function GET(
     }
 
     const submissions = await prisma.submission.findMany({
-      where: { quizId: params.id },
+      where: { quizId: id },
       orderBy: { createdAt: 'desc' },
     });
 

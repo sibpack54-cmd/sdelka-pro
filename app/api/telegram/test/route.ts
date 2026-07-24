@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyToken } from '@/lib/auth';
-
-const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-const BOT_URL = `https://api.telegram.org/bot${BOT_TOKEN}`;
+import { sendTelegramMessage } from '@/lib/telegram';
 
 export async function POST(req: Request) {
   try {
@@ -12,7 +10,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const payload = verifyToken(token);
+    const payload = await verifyToken(token);
     if (!payload) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
@@ -21,10 +19,6 @@ export async function POST(req: Request) {
 
     if (!chatId) {
       return NextResponse.json({ error: 'chatId required' }, { status: 400 });
-    }
-
-    if (!BOT_TOKEN) {
-      return NextResponse.json({ error: 'Telegram bot not configured' }, { status: 500 });
     }
 
     const testMessage = `
@@ -36,31 +30,17 @@ export async function POST(req: Request) {
 Теперь вы будете получать уведомления о новых заявках.
     `.trim();
 
-    const response = await fetch(`${BOT_URL}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: testMessage,
-        parse_mode: 'HTML',
-      }),
-    });
+    await sendTelegramMessage(chatId, testMessage);
 
-    const data = await response.json();
-
-    if (!data.ok) {
-      throw new Error(data.description || 'Telegram API error');
-    }
-
-    // Сохраняем chatId в профиль
     await prisma.user.update({
-      where: { id: payload.userId },
+      where: { id: payload.userId as string },
       data: { telegramChatId: chatId, telegramEnabled: true },
     });
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
-    console.error('Telegram test error:', error);
-    return NextResponse.json({ error: error.message || 'Failed to send test' }, { status: 500 });
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error('Telegram test error:', err);
+    return NextResponse.json({ error: err.message || 'Failed to send test' }, { status: 500 });
   }
 }
